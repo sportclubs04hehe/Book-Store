@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Product>
+
+
+<partial name="_Notioutfores" />
+
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-md-6">
+            <h2 class="text-uppercase">Product List</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a class="btn btn-outline-success" asp-controller="Product" asp-action="Create">
+                <i class="bi bi-plus-square"></i>  New Product
+            </a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Author</th>
+            <th scope="col">List Price</th>
+            <th scope="col">Price</th>
+            <th scope="col">Price 50</th>
+            <th scope="col">Price 100</th>
+            <th scope="col" class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{
+            var stt = 1;
+        }
+
+        @foreach (var c in Model)
+        {
+            <tr>
+                <th scope="row">@stt</th>
+                <td>@c.Title</td>
+                <td>@c.Author</td>
+                <td>@c.ListPrice</td>
+                <td>@c.Price</td>
+                <td>@c.Price50</td>
+                <td>@c.Price100</td>
+                <td class="text-center">
+                    <div class="w-75 btn-group " role="group">
+                        <a class="btn btn-dark" asp-controller="Price" asp-action="Edit" asp-route-id="@c.Id">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a class="btn btn-danger" asp-controller="Price" asp-action="Delete" asp-route-id="@c.Id">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            stt++;
+        }
+
+    </tbody>
+</table>
