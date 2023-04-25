@@ -2,6 +2,7 @@
 using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -16,10 +17,20 @@ namespace WebBanSach.Areas.Admin.Controllers
         public IActionResult Index()
         {
             IEnumerable<Product> products = _unitOfWork.productRepository.GetAll();
+        
             return View(products);
         }
         public IActionResult Create()
         {
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.categoryRepository.GetAll()
+            .Select(
+                u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }
+            );
+            ViewBag.CategoryList = CategoryList;
             return View();
         }
 

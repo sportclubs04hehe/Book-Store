@@ -1,7 +1,7 @@
 ﻿@model Product
 
 <div class="container">
-    <h1 class="text-uppercase py-4">Create category</h1>
+    <h1 class="text-uppercase py-4">Create Product</h1>
 </div>
 
 <form method="post" asp-controller="Product" asp-action="Create">
@@ -19,13 +19,21 @@
 
     <div class="form-group">
         <label asp-for="Description"></label>
-        <textarea rows="5" cols="10" asp-for=Author class="form-control" placeholder="Display Order "> </textarea>
+        <textarea rows="5" cols="10" asp-for=Author class="form-control"> </textarea>
     </div>
 
     <div class="form-group">
         <label asp-for="IBSN"></label>
         <input type="text" asp-for=IBSN class="form-control" placeholder="Enter IBSN...">
         <span class="text-danger fst-italic" asp-validation-for="IBSN"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId"></label>
+        <select asp-for=CategoryId asp-items=ViewBag.CategoryList class="form-select">
+            <option disabled selected>--Select Category--</option>
+        </select>
+        <span class="text-danger fst-italic" asp-validation-for="CategoryId"></span>
     </div>
 
     <div class="form-group">
@@ -42,14 +50,14 @@
 
     <div class="form-group">
         <label asp-for="Price50"></label>
-        <input type="number" asp-for=ListPrice class="form-control" placeholder="Enter List Price...">
-        <span class="text-danger fst-italic" asp-validation-for="ListPrice"></span>
+        <input type="number" asp-for=Price50 class="form-control" placeholder="Enter Price 50...">
+        <span class="text-danger fst-italic" asp-validation-for="Price50"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="ListPrice"></label>
-        <input type="number" asp-for=ListPrice class="form-control" placeholder="Enter List Price...">
-        <span class="text-danger fst-italic" asp-validation-for="ListPrice"></span>
+        <label asp-for="Price100"></label>
+        <input type="number" asp-for=Price100 class="form-control" placeholder="Enter Price 100...">
+        <span class="text-danger fst-italic" asp-validation-for="Price100"></span>
     </div>
 
 

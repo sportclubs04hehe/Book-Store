@@ -22,14 +22,14 @@ namespace Bulky.DataAccess.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "CategoryId",
-                value: 0);
+                value: 1);
 
             migrationBuilder.UpdateData(
                 table: "products",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "CategoryId",
-                value: 0);
+                value: 3);
 
             migrationBuilder.CreateIndex(
                 name: "IX_products_CategoryId",

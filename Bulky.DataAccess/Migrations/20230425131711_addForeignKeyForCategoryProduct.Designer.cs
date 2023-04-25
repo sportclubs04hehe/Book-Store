@@ -11,7 +11,7 @@ using WebBanSach.Data;
 namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230425130609_addForeignKeyForCategoryProduct")]
+    [Migration("20230425131711_addForeignKeyForCategoryProduct")]
     partial class addForeignKeyForCategoryProduct
     {
         /// <inheritdoc />
@@ -95,7 +95,7 @@ namespace Bulky.DataAccess.Migrations
                         {
                             Id = 1,
                             Author = "Jone Wick",
-                            CategoryId = 0,
+                            CategoryId = 1,
                             Description = "Combo Sách Đầu Tư Bất Động Sản: Bất Động Sản Căn Bản + Donald Trump - Chiến Lược Đầu Tư Bất Động Sản (Tái Bản) + Trump - 100 Lời Khuyên Đầu Tư Bất Động Sản Khôn Ngoan Nhất + Đầu Tư Bất Động Sản - Cách Thức Khởi Nghiệp Và Thu Lợi Nhuận Lớn",
                             IBSN = "W874UI",
                             ListPrice = 99.0,
@@ -108,7 +108,7 @@ namespace Bulky.DataAccess.Migrations
                         {
                             Id = 2,
                             Author = "Daniel Goleman",
-                            CategoryId = 0,
+                            CategoryId = 3,
                             Description = "Everyone knows that a high IQ score does not guarantee a successful, happy and virtuous life",
                             IBSN = "JT87D02L",
                             ListPrice = 200.0,

@@ -27,7 +27,9 @@ namespace WebBanSach.Data
                     ListPrice = 99,
                     Price= 90,
                     Price50 = 85,
-                    Price100= 80
+                    Price100= 80,
+                    CategoryId= 1,
+                    Image = ""
                 },
                    new Product
                    {
@@ -39,7 +41,9 @@ namespace WebBanSach.Data
                        ListPrice = 200,
                        Price = 170,
                        Price50 = 150,
-                       Price100 = 80
+                       Price100 = 80,
+                       CategoryId= 3,
+                       Image = ""
                    }
                 );
         }
