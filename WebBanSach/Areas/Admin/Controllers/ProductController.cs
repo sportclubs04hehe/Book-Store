@@ -1,8 +1,11 @@
 ﻿using Bukly.Models;
+using Bukly.Models.ViewModel;
 using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
@@ -17,65 +20,69 @@ namespace WebBanSach.Areas.Admin.Controllers
         public IActionResult Index()
         {
             IEnumerable<Product> products = _unitOfWork.productRepository.GetAll();
-        
+
             return View(products);
         }
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.categoryRepository.GetAll()
-            .Select(
-                u => new SelectListItem
+
+            //ViewBag.CategoryList = CategoryList;
+            //ViewData["CategoryList"] = CategoryList;
+            #region Giải thích mã
+            //mã này tạo một ProductVM đối tượng, đặt CategoryList
+            //thuộc tính của nó thành danh sách SelectListItem các
+            //đối tượng được truy xuất từ ​​cơ sở dữ liệu và đặt Product
+            //thuộc tính của nó thành một đối tượng mới Product. Điều
+            //này có khả năng được sử dụng để điền vào mô hình chế độ
+            //xem với dữ liệu để hiển thị trong chế độ xem trong ứng dụng ASP.NET Core.
+            #endregion
+            ProductVM productVM = new()
+            {
+                Product = new(),
+                CategoryList = _unitOfWork.categoryRepository.GetAll().Select(i => new SelectListItem
                 {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                }
-            );
-            ViewBag.CategoryList = CategoryList;
-            return View();
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+
+            if(id == 0 || id == null)
+            {
+                //create
+                return View(productVM);
+            }
+            else
+            {
+                //update
+                productVM.Product = _unitOfWork.productRepository.Get(p => p.Id == id);
+                return View(productVM);
+            }
+            
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Upsert(ProductVM prd, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.productRepository.Add(product);
+                _unitOfWork.productRepository.Add(prd.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "New record created successfully!";
                 return RedirectToAction("Index");
+            }else
+            {
+                prd.CategoryList = _unitOfWork.categoryRepository.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+
+                return View();
             }
-            return View();
+
+
         }
 
-        public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            Product? product = _unitOfWork.productRepository.Get(u => u.Id == id);
-            //Product product1= _db.Categories.Find(id);
-            //Product product2= _db.Categories.Where(u => u.Id == id).FirstOrDefault();
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.productRepository.Update(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Edit record successfully!";
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
 
         public ActionResult Delete(int? id)
         {

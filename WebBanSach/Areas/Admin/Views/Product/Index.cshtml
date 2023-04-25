@@ -9,7 +9,7 @@
             <h2 class="text-uppercase">Product List</h2>
         </div>
         <div class="col-md-6 text-end">
-            <a class="btn btn-outline-success" asp-controller="Product" asp-action="Create">
+            <a class="btn btn-outline-success" asp-controller="Product" asp-action="Upsert">
                 <i class="bi bi-plus-square"></i>  New Product
             </a>
         </div>
@@ -47,10 +47,10 @@
                 <td>@c.Price100</td>
                 <td class="text-center">
                     <div class="w-75 btn-group " role="group">
-                        <a class="btn btn-dark" asp-controller="Price" asp-action="Edit" asp-route-id="@c.Id">
+                        <a class="btn btn-dark" asp-controller="Product" asp-action="Upsert" asp-route-id="@c.Id">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <a class="btn btn-danger" asp-controller="Price" asp-action="Delete" asp-route-id="@c.Id">
+                        <a class="btn btn-danger" asp-controller="Product" asp-action="Delete" asp-route-id="@c.Id">
                             <i class="bi bi-trash"></i> Delete
                         </a>
                     </div>
