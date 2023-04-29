@@ -16,12 +16,12 @@
     </div>
 </div>
 
-<table class="table table-striped">
+<table id="myTable" class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Author</th>
+            <th scope="col">Category</th>
             <th scope="col">List Price</th>
             <th scope="col">Price</th>
             <th scope="col">Price 50</th>
@@ -31,33 +31,10 @@
     </thead>
     <tbody>
 
-        @{
-            var stt = 1;
-        }
-
-        @foreach (var c in Model)
-        {
-            <tr>
-                <th scope="row">@stt</th>
-                <td>@c.Title</td>
-                <td>@c.Author</td>
-                <td>@c.ListPrice</td>
-                <td>@c.Price</td>
-                <td>@c.Price50</td>
-                <td>@c.Price100</td>
-                <td class="text-center">
-                    <div class="w-75 btn-group " role="group">
-                        <a class="btn btn-dark" asp-controller="Product" asp-action="Upsert" asp-route-id="@c.Id">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                        <a class="btn btn-danger" asp-controller="Product" asp-action="Delete" asp-route-id="@c.Id">
-                            <i class="bi bi-trash"></i> Delete
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            stt++;
-        }
-
     </tbody>
 </table>
+
+
+@section Scripts{
+    <script src="~/js/products.js"></script>
+}

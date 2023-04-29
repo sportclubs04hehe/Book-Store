@@ -17,7 +17,7 @@ namespace Bulky.DataAccess.Repository.IRepository
         //Nó được sử dụng để lấy về tất cả các đối tượng của kiểu T từ nguồn dữ liệu.
 
         #endregion
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(string? includeProperties = null);
         #region
         //T Get(Expression<Func<Task, bool>> fillter):
         //Phương thức này có một tham số là một biểu thức
@@ -25,7 +25,7 @@ namespace Bulky.DataAccess.Repository.IRepository
         //và trả về một đối tượng kiểu T. Phương thức này được sử dụng
         //để lấy về một đối tượng kiểu T dựa trên một điều kiện (filter) được chỉ định.
         #endregion
-        T Get(Expression<Func<T, bool>> filter);
+        T Get(Expression<Func<T, bool>> filter, string? includeProperties = null);
         #region
         //void Add(T entity): Phương thức này có một tham số
         //là một đối tượng kiểu T, và không trả về giá trị nào.

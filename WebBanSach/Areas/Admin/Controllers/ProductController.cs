@@ -1,7 +1,9 @@
 ﻿using Bukly.Models;
 using Bukly.Models.ViewModel;
+using Bukly.Utility;
 using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,17 +11,19 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Admin"),Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ProductController(IUnitOfWork unit)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductController(IUnitOfWork unit, IWebHostEnvironment webHost)
         {
             _unitOfWork = unit;
+            _webHostEnvironment = webHost;
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> products = _unitOfWork.productRepository.GetAll();
+            IEnumerable<Product> products = _unitOfWork.productRepository.GetAll(includeProperties:"Category");
 
             return View(products);
         }
@@ -65,9 +69,54 @@ namespace WebBanSach.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.productRepository.Add(prd.Product);
-                _unitOfWork.Save();
-                TempData["success"] = "New record created successfully!";
+                //Dòng mã này truy xuất đường dẫn gốc web của ứng dụng ASP.NET Core
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if(file != null)
+                {
+                    #region Giải thích mã
+                    //Dòng này tạo một tên tệp duy nhất cho tệp đã tải lên bằng
+                    //cách kết hợp một Guidchuỗi mới được tạo với phần mở rộng
+                    //ban đầu của tệp thu được từ file.FileNamethuộc tính.
+                    //Điều này được thực hiện để tránh ghi đè lên các tệp hiện có cùng tên.
+                    #endregion
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\products");
+
+                    if(!string.IsNullOrEmpty(prd.Product.Image)) {
+                        //xóa hình ảnh cũ 
+                        var oldPathImage =
+                            Path.Combine(wwwRootPath, prd.Product.Image.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldPathImage))
+                        {
+                            System.IO.File.Delete(oldPathImage);
+                        }
+                    }
+
+                    #region Giải thích mã
+                    //Dòng này tạo một FileStream đối tượng để ghi tệp đã tải lên
+                    //vào đường dẫn tệp đích, cho FileMode.Createbiết tệp mới sẽ được tạo.
+                    #endregion
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    prd.Product.Image = @"\images\products\" + fileName;
+                }
+
+                if(prd.Product.Id == 0)
+                {
+                    _unitOfWork.productRepository.Add(prd.Product);
+                    _unitOfWork.Save();
+                    TempData["success"] = "New record created successfully!";
+                }
+                else
+                {
+                    _unitOfWork.productRepository.Update(prd.Product);
+                    _unitOfWork.Save();
+                    TempData["success"] = "Update record successfully!";
+                }
+               
                 return RedirectToAction("Index");
             }else
             {
@@ -84,39 +133,40 @@ namespace WebBanSach.Areas.Admin.Controllers
         }
 
 
-        public ActionResult Delete(int? id)
-        {
-            if (id == 0 || id == null)
-            {
-                return NotFound();
-            }
-            Product product = _unitOfWork.productRepository.Get(u => u.Id == id);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            IEnumerable<Product> products = _unitOfWork.productRepository.GetAll(includeProperties: "Category");
+            return Json(new { data = products});
+
         }
 
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
+        [HttpDelete]
+        public IActionResult Delete(int? id)
         {
-            if (id == 0 || id == null)
+            var productDeleted = _unitOfWork.productRepository.Get(p => p.Id == id);
+            if(productDeleted == null)
             {
-                return NotFound();
+                return Json(new { success= false, message = "Error while deleting!"});
             }
 
-            Product? product = _unitOfWork.productRepository.Get(u => u.Id == id);
+            var oldPathImage =
+                          Path.Combine(_webHostEnvironment.WebRootPath,
+                          productDeleted.Image.TrimStart('\\'));
 
-            if (ModelState.IsValid)
+            if (System.IO.File.Exists(oldPathImage))
             {
-                _unitOfWork.productRepository.Remove(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Delete record successfully!";
-                return RedirectToAction("Index");
+                System.IO.File.Delete(oldPathImage);
             }
-            return View();
+
+            _unitOfWork.productRepository.Remove(productDeleted);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Delete Success!" });
+
         }
+        #endregion
     }
 }
